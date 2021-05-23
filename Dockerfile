@@ -11,7 +11,8 @@ RUN ln -s /backend/vcpkg/vcpkg /usr/bin/vcpkg
 
 FROM vcpkg-env AS backend-build
 
-RUN apt-get install -y cmake zip libgl-dev && \
+RUN apt-get update && \
+    apt-get install -y cmake zip libgl-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN vcpkg install --clean-after-build restinio
@@ -32,5 +33,7 @@ RUN groupadd -r ape && useradd -r -g ape ape
 USER ape
 
 COPY --from=backend-build /backend/src/build/backend /backend/
+
+EXPOSE 20100/tcp
 
 ENTRYPOINT [ "./backend/backend" ]
